@@ -3,6 +3,10 @@ name: Toolkit Dry Run
 on:
   pull_request:
 
+env:
+  # set the width of the terminal emulator in github workflows
+  COLUMNS: 99
+
 jobs:
   build-modules:
     runs-on: ubuntu-latest
@@ -17,9 +21,105 @@ jobs:
         IDP_CLIENT_ID: ${{ vars.IDP_CLIENT_ID }}
         IDP_CLIENT_SECRET: ${{ secrets.IDP_CLIENT_SECRET }}
         IDP_TENANT_ID: ${{ vars.IDP_TENANT_ID }}
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      build-status: ${{ steps.build.outcome }}
+      deploy-status: ${{ steps.deploy.outcome }}
+
     steps:
       - uses: actions/checkout@v4
-      - name: Build the modules
-        run: cdf build
-      - name: Dry Run the modules deployment
-        run: cdf deploy --dry-run
+      - name: Create a folder for logs
+        run: |
+          if [ ! -d "cdf-tk-logs" ]; then
+            mkdir cdf-tk-logs
+          fi
+      - name: Build modules
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          cdf build --verbose --env dev -o toolkit --build-dir cdf-tk-build | tee cdf-tk-logs/build.log
+      - name: Dry run modules deployment
+        id: deploy
+        continue-on-error: true
+        if: ${{ steps.build.outcome == 'success' }}
+        run: |
+          set -o pipefail
+          cdf deploy --verbose --dry-run cdf-tk-build | tee cdf-tk-logs/deploy.log
+      - name: Store logs
+        id: store-logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdf-tk-logs
+          path: cdf-tk-logs/
+          retention-days: 1
+          if-no-files-found: error
+
+  pr-writeback:
+    needs: build-modules
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download log files
+        id: download-logs
+        uses: actions/download-artifact@v4
+        with:
+          name: cdf-tk-logs
+          path: cdf-tk-logs
+      - name: Write a comment back to the PR
+        id: write_comment
+        shell: bash
+        run: |
+          set -e
+          B_STATUS="Build status: **${{ needs.build-modules.outputs.build-status }}**"
+          DR_STATUS="Dry run status: **${{ needs.build-modules.outputs.deploy-status }}**"
+
+          if [ -f cdf-tk-logs/deploy.log ]; then
+            MSG=$(cat cdf-tk-logs/deploy.log)
+          elif [ -f cdf-tk-logs/build.log ]; then
+            MSG=$(cat cdf-tk-logs/build.log)
+          else
+            MSG='Error. Check workflow run for details.'
+          fi
+
+          REPO_URL=$(jq '.repository.html_url' -r < "$GITHUB_EVENT_PATH")
+          PR_NUMBER=$(jq '.number' -r < "$GITHUB_EVENT_PATH")
+
+          RUN_LINK="[$GITHUB_RUN_ID]($REPO_URL/actions/runs/$GITHUB_RUN_ID)"
+
+          printf 'Toolkit dry run triggered: %s\n\n%s\n%s\n\n```\n%s\n```\n' \
+            "$RUN_LINK" "$B_STATUS" "$DR_STATUS" "$MSG" > pr-comment-body.txt
+
+          gh pr comment $PR_NUMBER -F pr-comment-body.txt 2> pr-comment-error.log
+
+          if [ "$?" -eq 0 ]; then
+            exit 0
+          fi
+
+          if [ -f pr-comment-error.log ]; then
+            if [ $(grep -c -i 'body is too long' < pr-comment-error.log) -gt 0]; then
+              # truncate the file and try posting the comment again
+
+              head -20 pr-comment-body.txt > pr-comment-body-truncated.txt
+              print '\n... (content truncated, see the workflow run for details) ...\n' >> pr-comment-body-truncated.txt
+              tail -50 pr-comment-body.txt >> pr-comment-body-truncated.txt
+
+              if [ $(wc -c < pr-comment-body-truncated.txt) -lt 65536 ]; then
+                gh pr comment $PR_NUMBER -F pr-comment-body.txt
+              else
+                MSG='Log too long... See workflow run for details.\n'
+                COMMENT=$(printf 'Toolkit dry run triggered: %s\n\n%s\n%s\n\n```\n%s\n```\n' \
+                  "$RUN_LINK" "$B_STATUS" "$DR_STATUS" "$MSG")
+                gh pr comment $PR_NUMBER -b "$COMMENT"
+            else
+              print 'Could not create a PR comment. Error:\n'
+              cat pr-comment-error.log
+            fi
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
