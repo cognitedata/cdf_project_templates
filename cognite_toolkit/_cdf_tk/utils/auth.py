@@ -326,19 +326,20 @@ class EnvironmentVariables:
             raise ToolkitKeyError("CDF_TOKEN must be set in the environment", "CDF_TOKEN")
         return Token(self.CDF_TOKEN)
 
-    def get_config(self) -> ToolkitClientConfig:
+    def get_config(self, is_strict_validation: bool) -> ToolkitClientConfig:
         return ToolkitClientConfig(
             client_name=CLIENT_NAME,
             project=self.CDF_PROJECT,
             credentials=self.get_credentials(),
             base_url=self.cdf_url,
+            is_strict_validation=is_strict_validation,
             timeout=self.CDF_CLIENT_TIMEOUT,
             max_workers=self.CDF_CLIENT_MAX_WORKERS,
         )
 
-    def get_client(self) -> ToolkitClient:
+    def get_client(self, is_strict_validation: bool = True) -> ToolkitClient:
         if self._client is None:
-            self._client = ToolkitClient(config=self.get_config())
+            self._client = ToolkitClient(config=self.get_config(is_strict_validation))
         return self._client
 
     def dump(self, include_os: bool = True) -> dict[str, str | None]:

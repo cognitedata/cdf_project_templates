@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Literal, cast
 
 from cognite.client import ClientConfig, CogniteClient
+from cognite.client.credentials import CredentialProvider
 
 from .api.dml import DMLAPI
 from .api.location_filters import LocationFiltersAPI
@@ -12,6 +13,34 @@ from .api.verify import VerifyAPI
 
 
 class ToolkitClientConfig(ClientConfig):
+    def __init__(
+        self,
+        client_name: str,
+        project: str,
+        credentials: CredentialProvider,
+        api_subversion: str | None = None,
+        base_url: str | None = None,
+        max_workers: int | None = None,
+        is_strict_validation: bool = True,
+        headers: dict[str, str] | None = None,
+        timeout: int | None = None,
+        file_transfer_timeout: int | None = None,
+        debug: bool = False,
+    ) -> None:
+        super().__init__(
+            client_name=client_name,
+            project=project,
+            credentials=credentials,
+            api_subversion=api_subversion,
+            base_url=base_url,
+            max_workers=max_workers,
+            headers=headers,
+            timeout=timeout,
+            file_transfer_timeout=file_transfer_timeout,
+            debug=debug,
+        )
+        self.is_strict_validation = is_strict_validation
+
     @property
     def cloud_provider(self) -> Literal["azure", "aws", "gcp", "unknown"]:
         cdf_cluster = self.cdf_cluster

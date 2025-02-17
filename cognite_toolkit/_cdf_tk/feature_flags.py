@@ -28,6 +28,10 @@ class Flags(Enum):
         "visible": True,
         "description": "Enables support for the populate command",
     }
+    STRICT_VALIDATION: ClassVar[dict[str, Any]] = {  # type: ignore[misc]
+        "visible": True,
+        "description": "For Workflow/Transformations/Function do not fallback to Toolkit credentials when validation-type != 'dev'",
+    }
 
     def is_enabled(self) -> bool:
         return FeatureFlag.is_enabled(self)

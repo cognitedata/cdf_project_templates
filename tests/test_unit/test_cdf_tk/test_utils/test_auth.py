@@ -88,7 +88,7 @@ class TestEnvironmentVariables:
         }
 
         with pytest.raises(ToolkitMissingValueError) as error:
-            _ = EnvironmentVariables(**args).get_config()
+            _ = EnvironmentVariables(**args).get_config(is_strict_validation=True)
 
         assert (
             str(error.value) == "The login flow 'client_credentials' requires the following environment variables: "
