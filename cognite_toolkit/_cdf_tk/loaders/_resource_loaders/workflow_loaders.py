@@ -39,7 +39,7 @@ from cognite.client.data_classes.capabilities import (
     Capability,
     WorkflowOrchestrationAcl,
 )
-from cognite.client.exceptions import CogniteNotFoundError
+from cognite.client.exceptions import CogniteAuthError, CogniteNotFoundError
 from cognite.client.utils.useful_types import SequenceNotStr
 from rich import print
 from rich.console import Console
@@ -47,6 +47,7 @@ from rich.console import Console
 from cognite_toolkit._cdf_tk._parameters import ANY_INT, ANY_STR, ANYTHING, ParameterSpec, ParameterSpecSet
 from cognite_toolkit._cdf_tk.client import ToolkitClient
 from cognite_toolkit._cdf_tk.exceptions import (
+    ResourceCreationError,
     ToolkitRequiredValueError,
 )
 from cognite_toolkit._cdf_tk.feature_flags import Flags
@@ -57,7 +58,7 @@ from cognite_toolkit._cdf_tk.tk_warnings import (
     ToolkitWarning,
 )
 from cognite_toolkit._cdf_tk.utils import calculate_secure_hash, humanize_collection, to_directory_compatible
-from cognite_toolkit._cdf_tk.utils.cdf import read_auth
+from cognite_toolkit._cdf_tk.utils.cdf import read_auth, try_find_error
 from cognite_toolkit._cdf_tk.utils.diff_list import diff_list_hashable, diff_list_identifiable
 
 from .auth_loaders import GroupAllScopedLoader
@@ -491,9 +492,17 @@ class WorkflowTriggerLoader(
     def create(self, items: WorkflowTriggerUpsertList) -> WorkflowTriggerList:
         created = WorkflowTriggerList([])
         for item in items:
-            credentials = self._authentication_by_id.get(item.external_id)
-            created.append(self.client.workflows.triggers.upsert(item, credentials))
+            created.append(self._create_item(item))
         return created
+
+    def _create_item(self, item: WorkflowTriggerUpsert) -> WorkflowTrigger:
+        credentials = self._authentication_by_id.get(item.external_id)
+        try:
+            return self.client.workflows.triggers.upsert(item, credentials)
+        except CogniteAuthError as e:
+            if hint := try_find_error(credentials):
+                raise ResourceCreationError(f"Failed to create WorkflowTrigger {item.external_id}: {hint}") from e
+            raise e
 
     def retrieve(self, ids: SequenceNotStr[str]) -> WorkflowTriggerList:
         all_triggers = self.client.workflows.triggers.list(limit=-1)
@@ -508,8 +517,7 @@ class WorkflowTriggerLoader(
             if item.external_id in existing_lookup:
                 self.client.workflows.triggers.delete(external_id=item.external_id)
 
-            credentials = self._authentication_by_id.get(item.external_id)
-            created = self.client.workflows.triggers.upsert(item, client_credentials=credentials)
+            created = self._create_item(item)
             updated.append(created)
         return updated
 

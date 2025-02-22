@@ -1,9 +1,11 @@
 from collections.abc import Hashable, Iterator
 from typing import Any, Literal, overload
+from urllib.parse import urlparse
 
 from cognite.client.credentials import OAuthClientCredentials
 from cognite.client.data_classes import (
     ClientCredentials,
+    OidcCredentials,
 )
 from cognite.client.data_classes.data_modeling import Edge, Node, ViewId
 from cognite.client.data_classes.filters import SpaceFilter
@@ -11,6 +13,7 @@ from cognite.client.exceptions import CogniteAPIError
 from rich.console import Console
 
 from cognite_toolkit._cdf_tk.client import ToolkitClient
+from cognite_toolkit._cdf_tk.constants import ENV_VAR_PATTERN
 from cognite_toolkit._cdf_tk.exceptions import (
     ToolkitRequiredValueError,
     ToolkitTypeError,
@@ -20,6 +23,29 @@ from cognite_toolkit._cdf_tk.tk_warnings import (
     HighSeverityWarning,
     MediumSeverityWarning,
 )
+from cognite_toolkit._cdf_tk.utils import humanize_collection
+
+
+def try_find_error(credentials: OidcCredentials | ClientCredentials | None) -> str | None:
+    if credentials is None:
+        return None
+    missing: list[str] = []
+    if client_id := ENV_VAR_PATTERN.match(credentials.client_id):
+        missing.append(client_id.group(1))
+    if client_secret := ENV_VAR_PATTERN.match(credentials.client_secret):
+        missing.append(client_secret.group(1))
+    if missing:
+        plural = "s are" if len(missing) > 1 else " is"
+        return f"The environment variable{plural} not set: {humanize_collection(missing)}."
+    if isinstance(credentials, ClientCredentials):
+        return None
+    try:
+        result = urlparse(credentials.token_uri)
+        if not all([result.scheme, result.netloc]):
+            raise ValueError
+    except ValueError:
+        return f"The tokenUri {credentials.token_uri!r} is not a valid URI."
+    return None
 
 
 @overload

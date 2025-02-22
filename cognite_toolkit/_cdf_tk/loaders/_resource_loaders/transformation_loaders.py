@@ -27,6 +27,7 @@
 from __future__ import annotations
 
 import warnings
+from collections import defaultdict
 from collections.abc import Hashable, Iterable, Sequence
 from functools import lru_cache
 from pathlib import Path
@@ -57,13 +58,14 @@ from cognite.client.data_classes.transformations.notifications import (
     TransformationNotificationWrite,
     TransformationNotificationWriteList,
 )
-from cognite.client.exceptions import CogniteAPIError, CogniteDuplicatedError, CogniteNotFoundError
+from cognite.client.exceptions import CogniteAPIError, CogniteAuthError, CogniteDuplicatedError, CogniteNotFoundError
 from cognite.client.utils.useful_types import SequenceNotStr
 from rich import print
 
 from cognite_toolkit._cdf_tk._parameters import ANY_INT, ParameterSpec, ParameterSpecSet
 from cognite_toolkit._cdf_tk.client.data_classes.raw import RawDatabase, RawTable
 from cognite_toolkit._cdf_tk.exceptions import (
+    ResourceCreationError,
     ToolkitFileNotFoundError,
     ToolkitInvalidParameterNameError,
     ToolkitRequiredValueError,
@@ -74,11 +76,13 @@ from cognite_toolkit._cdf_tk.feature_flags import Flags
 from cognite_toolkit._cdf_tk.loaders._base_loaders import ResourceLoader
 from cognite_toolkit._cdf_tk.utils import (
     calculate_secure_hash,
+    humanize_collection,
     in_dict,
     load_yaml_inject_variables,
     quote_int_value_by_key_in_yaml,
     safe_read,
 )
+from cognite_toolkit._cdf_tk.utils.cdf import try_find_error
 from cognite_toolkit._cdf_tk.utils.diff_list import diff_list_hashable
 
 from .auth_loaders import GroupAllScopedLoader
@@ -321,7 +325,12 @@ class TransformationLoader(
             warnings.simplefilter("ignore")
             # Ignoring warnings from SDK about session unauthorized. Motivation is CDF is not fast enough to
             # handle first a group that authorizes the session and then the transformation.
-            return self.client.transformations.create(items)
+            try:
+                return self.client.transformations.create(items)
+            except CogniteAuthError as e:
+                if error := self._create_auth_creation_error(items):
+                    raise error from e
+                raise e
 
     def retrieve(self, ids: SequenceNotStr[str | int]) -> TransformationList:
         internal_ids, external_ids = self._split_ids(ids)
@@ -329,12 +338,36 @@ class TransformationLoader(
             ids=internal_ids, external_ids=external_ids, ignore_unknown_ids=True
         )
 
-    def update(self, items: TransformationWriteList) -> TransformationList:
+    def update(self, items: Sequence[TransformationWrite]) -> TransformationList:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             # Ignoring warnings from SDK about session unauthorized. Motivation is CDF is not fast enough to
             # handle first a group that authorizes the session and then the transformation.
-            return self.client.transformations.update(items, mode="replace")
+            try:
+                return self.client.transformations.update(items, mode="replace")
+            except CogniteAuthError as e:
+                if error := self._create_auth_creation_error(items):
+                    raise error from e
+                raise e
+
+    @staticmethod
+    def _create_auth_creation_error(items: Sequence[TransformationWrite]) -> ResourceCreationError | None:
+        hints_by_id: dict[str, list[str]] = defaultdict(list)
+        for item in items:
+            if not item.external_id:
+                continue
+            hint_source = try_find_error(item.source_oidc_credentials)
+            if hint_source:
+                hints_by_id[item.external_id].append(hint_source)
+            if hint_dest := try_find_error(item.destination_oidc_credentials):
+                if hint_dest != hint_source:
+                    hints_by_id[item.external_id].append(hint_dest)
+        if hints_by_id:
+            body = "\n".join(f"  {id_} - {humanize_collection(hints)}" for id_, hints in hints_by_id.items())
+            return ResourceCreationError(
+                f"Failed to create Transformation(s) du to likely invalid credentials:\n{body}",
+            )
+        return None
 
     def delete(self, ids: SequenceNotStr[str | int]) -> int:
         existing = self.retrieve(ids).as_ids()

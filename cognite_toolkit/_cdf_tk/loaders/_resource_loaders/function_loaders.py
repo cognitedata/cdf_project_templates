@@ -23,6 +23,7 @@ from cognite.client.data_classes.capabilities import (
     SessionsAcl,
 )
 from cognite.client.data_classes.functions import HANDLER_FILE_NAME
+from cognite.client.exceptions import CogniteAuthError
 from cognite.client.utils.useful_types import SequenceNotStr
 from rich import print
 from rich.console import Console
@@ -42,7 +43,7 @@ from cognite_toolkit._cdf_tk.utils import (
     calculate_secure_hash,
     calculate_str_or_file_hash,
 )
-from cognite_toolkit._cdf_tk.utils.cdf import read_auth
+from cognite_toolkit._cdf_tk.utils.cdf import read_auth, try_find_error
 
 from .auth_loaders import GroupAllScopedLoader
 from .data_organization_loaders import DataSetsLoader
@@ -481,7 +482,13 @@ class FunctionScheduleLoader(
             if id_ not in self.authentication_by_id:
                 raise ToolkitRequiredValueError(f"Authentication is missing for schedule {id_!r}")
             client_credentials = self.authentication_by_id[id_]
-            created = self.client.functions.schedules.create(item, client_credentials=client_credentials)
+            try:
+                created = self.client.functions.schedules.create(item, client_credentials=client_credentials)
+            except CogniteAuthError as e:
+                if hint := try_find_error(client_credentials):
+                    raise ResourceCreationError(f"Failed to create Function Schedule {id_}: {hint}") from e
+                raise e
+
             # The PySDK mutates the input object, such that function_id is set and function_external_id is None.
             # If we call .get_id on the returned object, it will raise an error we require the function_external_id
             # to be set.
