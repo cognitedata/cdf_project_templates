@@ -15,6 +15,12 @@ Changes are grouped as follows:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## TBD
+
+### Fixed
+
+- Deploying multiple views with reverse direct relation dependencies no longer raises a `ResourceCreationError`.
+
 ## [0.4.9] - 2025-02-20
 
 ### Added
