@@ -1,0 +1,17 @@
+space: {{ schemaSpace }}
+externalId: TexturedMap
+name: TexturedMap
+version: v1
+properties:
+  label:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: label
+  file:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: file

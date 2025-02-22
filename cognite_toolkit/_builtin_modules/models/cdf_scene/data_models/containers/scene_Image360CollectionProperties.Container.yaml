@@ -1,0 +1,22 @@
+space: {{ schemaSpace }}
+externalId: Image360CollectionProperties
+name: Image360CollectionProperties
+properties:
+  image360CollectionExternalId:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: image360CollectionExternalId
+  image360CollectionSpace:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: image360CollectionSpace

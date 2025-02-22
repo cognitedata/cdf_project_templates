@@ -1,0 +1,21 @@
+space: {{ schemaSpace }}
+externalId: TexturedMap
+name: TexturedMap
+properties:
+  label:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: label
+  file:
+    type:
+      list: false
+      type: file
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: file

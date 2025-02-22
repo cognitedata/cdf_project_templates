@@ -1,0 +1,29 @@
+space: {{ schemaSpace }}
+externalId: TexturedPlane
+name: TexturedPlane
+properties:
+  wrapping:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: wrapping
+  repeatU:
+    type:
+      list: false
+      type: int64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: repeatU
+  repeatV:
+    type:
+      list: false
+      type: int64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: repeatV

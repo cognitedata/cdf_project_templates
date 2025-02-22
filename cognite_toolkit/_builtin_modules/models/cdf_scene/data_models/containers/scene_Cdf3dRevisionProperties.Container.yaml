@@ -1,0 +1,12 @@
+space: {{ schemaSpace }}
+externalId: Cdf3dRevisionProperties
+name: Cdf3dRevisionProperties
+properties:
+  revisionId:
+    type:
+      list: false
+      type: int64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: revisionId

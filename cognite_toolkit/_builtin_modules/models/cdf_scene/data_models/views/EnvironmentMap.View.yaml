@@ -1,0 +1,28 @@
+space: {{ schemaSpace }}
+externalId: EnvironmentMap
+name: EnvironmentMap
+implements:
+- space: {{ schemaSpace }}
+  externalId: TexturedMap
+  version: v1
+  type: view
+version: v1
+properties:
+  label:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: label
+  file:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: file
+  isSpherical:
+    container:
+      space: {{ schemaSpace }}
+      externalId: EnvironmentMap
+      type: container
+    containerPropertyIdentifier: isSpherical

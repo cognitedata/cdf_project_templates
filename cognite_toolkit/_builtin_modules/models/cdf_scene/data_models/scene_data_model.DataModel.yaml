@@ -1,0 +1,66 @@
+space: {{ schemaSpace }}
+externalId: scene_data_model
+name: SceneConfiguration
+description: This is the data model used for storing 3D scenes
+version: '1'
+views:
+- space: {{ schemaSpace }}
+  externalId: SceneConfiguration
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: Image360CollectionProperties
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: RevisionProperties
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: EnvironmentMap
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: TexturedMap
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: TexturedPlane
+  version: v1
+  type: view
+- space: {{ schemaSpace }}
+  externalId: Image360CollectionScene
+  version: v1
+  type: view
+- space: cdf_3d_schema
+  externalId: Cdf3dModel
+  version: '1'
+  type: view
+- space: cdf_3d_schema
+  externalId: Cdf3dEntity
+  version: '1'
+  type: view
+- space: cdf_3d_schema
+  externalId: Cdf3dConnectionProperties
+  version: '1'
+  type: view
+- space: cdf_360_image_schema
+  externalId: Image360
+  version: v1
+  type: view
+- space: cdf_360_image_schema
+  externalId: Image360Collection
+  version: v1
+  type: view
+- space: cdf_360_image_schema
+  externalId: Station360
+  version: v1
+  type: view
+- space: cdf_3d_schema
+  externalId: Transformation3d
+  version: v1
+  type: view
+- space: cdf_3d_schema
+  externalId: CubeMap
+  version: v1
+  type: view

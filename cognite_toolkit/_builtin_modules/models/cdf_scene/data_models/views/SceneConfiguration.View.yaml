@@ -1,0 +1,166 @@
+space: {{ schemaSpace }}
+externalId: SceneConfiguration
+name: SceneConfiguration
+version: v1
+properties:
+  name:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: name
+  description:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: description
+  cameraTranslationX:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTranslationX
+  cameraTranslationY:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTranslationY
+  cameraTranslationZ:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTranslationZ
+  cameraEulerRotationX:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraEulerRotationX
+  cameraEulerRotationY:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraEulerRotationY
+  cameraEulerRotationZ:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraEulerRotationZ
+  cameraTargetX:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTargetX
+  cameraTargetY:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTargetY
+  cameraTargetZ:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: cameraTargetZ
+  latitude:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: latitude
+  longitude:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: longitude
+  thumbnailFile:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: thumbnailFile
+  createdBy:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: createdBy
+  updatedAt:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: updatedAt
+  updatedBy:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: updatedBy
+  skybox:
+    container:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration
+      type: container
+    containerPropertyIdentifier: skybox
+    source:
+      space: {{ schemaSpace }}
+      externalId: EnvironmentMap
+      version: v1
+      type: view
+  model3ds:
+    type:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration.model3ds
+    source:
+      space: cdf_3d_schema
+      externalId: Cdf3dModel
+      version: '1'
+      type: view
+    direction: outwards
+    edgeSource:
+      space: {{ schemaSpace }}
+      externalId: RevisionProperties
+      version: v1
+      type: view
+    connectionType: multi_edge_connection
+  images360Collections:
+    type:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration.images360Collections
+    source:
+      space: cdf_3d_schema
+      externalId: Cdf3dModel
+      version: '1'
+      type: view
+    direction: outwards
+    edgeSource:
+      space: {{ schemaSpace }}
+      externalId: Image360CollectionProperties
+      version: v1
+      type: view
+    connectionType: multi_edge_connection
+  texturedGroundPlanes:
+    type:
+      space: {{ schemaSpace }}
+      externalId: SceneConfiguration.texturedGroundPlanes
+    source:
+      space: {{ schemaSpace }}
+      externalId: TexturedPlane
+      version: v1
+      type: view
+    direction: outwards
+    edgeSource:
+      space: cdf_3d_schema
+      externalId: Transformation3d
+      version: v1
+      type: view
+    connectionType: multi_edge_connection

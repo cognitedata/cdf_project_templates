@@ -1,0 +1,16 @@
+space: {{ schemaSpace }}
+externalId: RevisionProperties
+name: Cdf3dRevisionProperties
+implements:
+- space: cdf_3d_schema
+  externalId: Transformation3d
+  version: v1
+  type: view
+version: v1
+properties:
+  revisionId:
+    container:
+      space: {{ schemaSpace }}
+      externalId: Cdf3dRevisionProperties
+      type: container
+    containerPropertyIdentifier: revisionId

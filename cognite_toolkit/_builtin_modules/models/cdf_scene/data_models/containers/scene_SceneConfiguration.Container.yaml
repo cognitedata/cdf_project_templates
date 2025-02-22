@@ -1,0 +1,152 @@
+space: {{ schemaSpace }}
+externalId: SceneConfiguration
+name: SceneConfiguration
+properties:
+  name:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: name
+  description:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: description
+  cameraTranslationX:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: cameraTranslationX
+  cameraTranslationY:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: cameraTranslationY
+  cameraTranslationZ:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: cameraTranslationZ
+  cameraEulerRotationX:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: cameraEulerRotationX
+  cameraEulerRotationY:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: cameraEulerRotationY
+  cameraEulerRotationZ:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: cameraEulerRotationZ
+  cameraTargetX:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: cameraTargetX
+  cameraTargetY:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: cameraTargetY
+  cameraTargetZ:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: cameraTargetZ
+  latitude:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: latitude
+  longitude:
+    type:
+      list: false
+      type: float64
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: longitude
+  createdBy:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: createdBy
+  updatedAt:
+    type:
+      list: false
+      type: timestamp
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: updatedAt
+  updatedBy:
+    type:
+      list: false
+      collation: ucs_basic
+      type: text
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: updatedBy
+  thumbnailFile:
+    type:
+      list: false
+      type: file
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: file
+  skybox:
+    type:
+      list: false
+      type: direct
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: skybox

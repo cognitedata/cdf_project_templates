@@ -1,0 +1,12 @@
+space: {{ schemaSpace }}
+externalId: EnvironmentMap
+name: EnvironmentMap
+properties:
+  isSpherical:
+    type:
+      list: false
+      type: boolean
+    immutable: false
+    nullable: false
+    autoIncrement: false
+    name: isSpherical

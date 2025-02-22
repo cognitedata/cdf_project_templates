@@ -1,0 +1,22 @@
+space: {{ schemaSpace }}
+externalId: Image360CollectionProperties
+name: Image360CollectionProperties
+implements:
+- space: cdf_3d_schema
+  externalId: Transformation3d
+  version: v1
+  type: view
+version: v1
+properties:
+  image360CollectionExternalId:
+    container:
+      space: {{ schemaSpace }}
+      externalId: Image360CollectionProperties
+      type: container
+    containerPropertyIdentifier: image360CollectionExternalId
+  image360CollectionSpace:
+    container:
+      space: {{ schemaSpace }}
+      externalId: Image360CollectionProperties
+      type: container
+    containerPropertyIdentifier: image360CollectionSpace

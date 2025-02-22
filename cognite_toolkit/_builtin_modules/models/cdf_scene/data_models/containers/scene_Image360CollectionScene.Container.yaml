@@ -1,0 +1,12 @@
+space: {{ schemaSpace }}
+externalId: Image360CollectionScene
+name: Image360CollectionScene
+properties:
+  model3d:
+    type:
+      list: false
+      type: direct
+    immutable: false
+    nullable: true
+    autoIncrement: false
+    name: model3d

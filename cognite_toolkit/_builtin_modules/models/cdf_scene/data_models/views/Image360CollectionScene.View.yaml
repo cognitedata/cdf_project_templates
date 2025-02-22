@@ -1,0 +1,20 @@
+space: {{ schemaSpace }}
+externalId: Image360CollectionScene
+implements:
+- space: cdf_360_image_schema
+  externalId: Image360Collection
+  version: v1
+  type: view
+version: v1
+properties:
+  model3d:
+    container:
+      space: {{ schemaSpace }}
+      externalId: Image360CollectionScene
+      type: container
+    containerPropertyIdentifier: model3d
+    source:
+      space: cdf_3d_schema
+      externalId: Cdf3dModel
+      version: '1'
+      type: view

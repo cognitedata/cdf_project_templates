@@ -1,0 +1,40 @@
+space: {{ schemaSpace }}
+externalId: TexturedPlane
+name: TexturedPlane
+implements:
+- space: {{ schemaSpace }}
+  externalId: TexturedMap
+  version: v1
+  type: view
+version: v1
+properties:
+  label:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: label
+  file:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedMap
+      type: container
+    containerPropertyIdentifier: file
+  wrapping:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedPlane
+      type: container
+    containerPropertyIdentifier: wrapping
+  repeatU:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedPlane
+      type: container
+    containerPropertyIdentifier: repeatU
+  repeatV:
+    container:
+      space: {{ schemaSpace }}
+      externalId: TexturedPlane
+      type: container
+    containerPropertyIdentifier: repeatV

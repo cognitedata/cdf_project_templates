@@ -1,0 +1,658 @@
+Container:
+- constraints: {}
+  externalId: Cdf3dRevisionProperties
+  indexes: {}
+  name: Cdf3dRevisionProperties
+  properties:
+    revisionId:
+      autoIncrement: false
+      immutable: false
+      name: revisionId
+      nullable: false
+      type:
+        list: false
+        type: int64
+  space: scene
+- constraints: {}
+  externalId: EnvironmentMap
+  indexes: {}
+  name: EnvironmentMap
+  properties:
+    isSpherical:
+      autoIncrement: false
+      immutable: false
+      name: isSpherical
+      nullable: false
+      type:
+        list: false
+        type: boolean
+  space: scene
+- constraints: {}
+  externalId: Image360CollectionProperties
+  indexes: {}
+  name: Image360CollectionProperties
+  properties:
+    image360CollectionExternalId:
+      autoIncrement: false
+      immutable: false
+      name: image360CollectionExternalId
+      nullable: false
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+    image360CollectionSpace:
+      autoIncrement: false
+      immutable: false
+      name: image360CollectionSpace
+      nullable: false
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+  space: scene
+- constraints: {}
+  externalId: Image360CollectionScene
+  indexes: {}
+  name: Image360CollectionScene
+  properties:
+    model3d:
+      autoIncrement: false
+      immutable: false
+      name: model3d
+      nullable: true
+      type:
+        list: false
+        type: direct
+  space: scene
+- constraints: {}
+  externalId: SceneConfiguration
+  indexes: {}
+  name: SceneConfiguration
+  properties:
+    cameraEulerRotationX:
+      autoIncrement: false
+      immutable: false
+      name: cameraEulerRotationX
+      nullable: true
+      type:
+        list: false
+        type: float64
+    cameraEulerRotationY:
+      autoIncrement: false
+      immutable: false
+      name: cameraEulerRotationY
+      nullable: false
+      type:
+        list: false
+        type: float64
+    cameraEulerRotationZ:
+      autoIncrement: false
+      immutable: false
+      name: cameraEulerRotationZ
+      nullable: false
+      type:
+        list: false
+        type: float64
+    cameraTargetX:
+      autoIncrement: false
+      immutable: false
+      name: cameraTargetX
+      nullable: true
+      type:
+        list: false
+        type: float64
+    cameraTargetY:
+      autoIncrement: false
+      immutable: false
+      name: cameraTargetY
+      nullable: true
+      type:
+        list: false
+        type: float64
+    cameraTargetZ:
+      autoIncrement: false
+      immutable: false
+      name: cameraTargetZ
+      nullable: true
+      type:
+        list: false
+        type: float64
+    cameraTranslationX:
+      autoIncrement: false
+      immutable: false
+      name: cameraTranslationX
+      nullable: false
+      type:
+        list: false
+        type: float64
+    cameraTranslationY:
+      autoIncrement: false
+      immutable: false
+      name: cameraTranslationY
+      nullable: false
+      type:
+        list: false
+        type: float64
+    cameraTranslationZ:
+      autoIncrement: false
+      immutable: false
+      name: cameraTranslationZ
+      nullable: false
+      type:
+        list: false
+        type: float64
+    createdBy:
+      autoIncrement: false
+      immutable: false
+      name: createdBy
+      nullable: true
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+    description:
+      autoIncrement: false
+      immutable: false
+      name: description
+      nullable: true
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+    latitude:
+      autoIncrement: false
+      immutable: false
+      name: latitude
+      nullable: true
+      type:
+        list: false
+        type: float64
+    longitude:
+      autoIncrement: false
+      immutable: false
+      name: longitude
+      nullable: true
+      type:
+        list: false
+        type: float64
+    name:
+      autoIncrement: false
+      immutable: false
+      name: name
+      nullable: false
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+    skybox:
+      autoIncrement: false
+      immutable: false
+      name: skybox
+      nullable: true
+      type:
+        list: false
+        type: direct
+    thumbnailFile:
+      autoIncrement: false
+      immutable: false
+      name: file
+      nullable: true
+      type:
+        list: false
+        type: file
+    updatedAt:
+      autoIncrement: false
+      immutable: false
+      name: updatedAt
+      nullable: true
+      type:
+        list: false
+        type: timestamp
+    updatedBy:
+      autoIncrement: false
+      immutable: false
+      name: updatedBy
+      nullable: true
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+  space: scene
+- constraints: {}
+  externalId: TexturedMap
+  indexes: {}
+  name: TexturedMap
+  properties:
+    file:
+      autoIncrement: false
+      immutable: false
+      name: file
+      nullable: true
+      type:
+        list: false
+        type: file
+    label:
+      autoIncrement: false
+      immutable: false
+      name: label
+      nullable: false
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+  space: scene
+- constraints: {}
+  externalId: TexturedPlane
+  indexes: {}
+  name: TexturedPlane
+  properties:
+    repeatU:
+      autoIncrement: false
+      immutable: false
+      name: repeatU
+      nullable: true
+      type:
+        list: false
+        type: int64
+    repeatV:
+      autoIncrement: false
+      immutable: false
+      name: repeatV
+      nullable: true
+      type:
+        list: false
+        type: int64
+    wrapping:
+      autoIncrement: false
+      immutable: false
+      name: wrapping
+      nullable: true
+      type:
+        collation: ucs_basic
+        list: false
+        type: text
+  space: scene
+DataModel:
+- description: This is the data model used for storing 3D scenes
+  externalId: scene_data_model
+  name: SceneConfiguration
+  space: scene
+  version: '1'
+  views:
+  - externalId: SceneConfiguration
+    space: scene
+    type: view
+    version: v1
+  - externalId: Image360CollectionProperties
+    space: scene
+    type: view
+    version: v1
+  - externalId: RevisionProperties
+    space: scene
+    type: view
+    version: v1
+  - externalId: EnvironmentMap
+    space: scene
+    type: view
+    version: v1
+  - externalId: TexturedMap
+    space: scene
+    type: view
+    version: v1
+  - externalId: TexturedPlane
+    space: scene
+    type: view
+    version: v1
+  - externalId: Image360CollectionScene
+    space: scene
+    type: view
+    version: v1
+  - externalId: Cdf3dModel
+    space: cdf_3d_schema
+    type: view
+    version: '1'
+  - externalId: Cdf3dEntity
+    space: cdf_3d_schema
+    type: view
+    version: '1'
+  - externalId: Cdf3dConnectionProperties
+    space: cdf_3d_schema
+    type: view
+    version: '1'
+  - externalId: Image360
+    space: cdf_360_image_schema
+    type: view
+    version: v1
+  - externalId: Image360Collection
+    space: cdf_360_image_schema
+    type: view
+    version: v1
+  - externalId: Station360
+    space: cdf_360_image_schema
+    type: view
+    version: v1
+  - externalId: Transformation3d
+    space: cdf_3d_schema
+    type: view
+    version: v1
+  - externalId: CubeMap
+    space: cdf_3d_schema
+    type: view
+    version: v1
+Space:
+- description: Space for storing 3D scene data model and instances
+  name: scene
+  space: scene
+View:
+- externalId: EnvironmentMap
+  implements:
+  - externalId: TexturedMap
+    space: scene
+    type: view
+    version: v1
+  name: EnvironmentMap
+  properties:
+    file:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: file
+    isSpherical:
+      container:
+        externalId: EnvironmentMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: isSpherical
+    label:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: label
+  space: scene
+  version: v1
+- externalId: Image360CollectionProperties
+  implements:
+  - externalId: Transformation3d
+    space: cdf_3d_schema
+    type: view
+    version: v1
+  name: Image360CollectionProperties
+  properties:
+    image360CollectionExternalId:
+      container:
+        externalId: Image360CollectionProperties
+        space: scene
+        type: container
+      containerPropertyIdentifier: image360CollectionExternalId
+    image360CollectionSpace:
+      container:
+        externalId: Image360CollectionProperties
+        space: scene
+        type: container
+      containerPropertyIdentifier: image360CollectionSpace
+  space: scene
+  version: v1
+- externalId: Image360CollectionScene
+  implements:
+  - externalId: Image360Collection
+    space: cdf_360_image_schema
+    type: view
+    version: v1
+  properties:
+    model3d:
+      container:
+        externalId: Image360CollectionScene
+        space: scene
+        type: container
+      containerPropertyIdentifier: model3d
+      source:
+        externalId: Cdf3dModel
+        space: cdf_3d_schema
+        type: view
+        version: '1'
+  space: scene
+  version: v1
+- externalId: RevisionProperties
+  implements:
+  - externalId: Transformation3d
+    space: cdf_3d_schema
+    type: view
+    version: v1
+  name: Cdf3dRevisionProperties
+  properties:
+    revisionId:
+      container:
+        externalId: Cdf3dRevisionProperties
+        space: scene
+        type: container
+      containerPropertyIdentifier: revisionId
+  space: scene
+  version: v1
+- externalId: SceneConfiguration
+  implements: []
+  name: SceneConfiguration
+  properties:
+    cameraEulerRotationX:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraEulerRotationX
+    cameraEulerRotationY:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraEulerRotationY
+    cameraEulerRotationZ:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraEulerRotationZ
+    cameraTargetX:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTargetX
+    cameraTargetY:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTargetY
+    cameraTargetZ:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTargetZ
+    cameraTranslationX:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTranslationX
+    cameraTranslationY:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTranslationY
+    cameraTranslationZ:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: cameraTranslationZ
+    createdBy:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: createdBy
+    description:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: description
+    images360Collections:
+      connectionType: multi_edge_connection
+      direction: outwards
+      edgeSource:
+        externalId: Image360CollectionProperties
+        space: scene
+        type: view
+        version: v1
+      source:
+        externalId: Cdf3dModel
+        space: cdf_3d_schema
+        type: view
+        version: '1'
+      type:
+        externalId: SceneConfiguration.images360Collections
+        space: scene
+    latitude:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: latitude
+    longitude:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: longitude
+    model3ds:
+      connectionType: multi_edge_connection
+      direction: outwards
+      edgeSource:
+        externalId: RevisionProperties
+        space: scene
+        type: view
+        version: v1
+      source:
+        externalId: Cdf3dModel
+        space: cdf_3d_schema
+        type: view
+        version: '1'
+      type:
+        externalId: SceneConfiguration.model3ds
+        space: scene
+    name:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: name
+    skybox:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: skybox
+      source:
+        externalId: EnvironmentMap
+        space: scene
+        type: view
+        version: v1
+    texturedGroundPlanes:
+      connectionType: multi_edge_connection
+      direction: outwards
+      edgeSource:
+        externalId: Transformation3d
+        space: cdf_3d_schema
+        type: view
+        version: v1
+      source:
+        externalId: TexturedPlane
+        space: scene
+        type: view
+        version: v1
+      type:
+        externalId: SceneConfiguration.texturedGroundPlanes
+        space: scene
+    thumbnailFile:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: thumbnailFile
+    updatedAt:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: updatedAt
+    updatedBy:
+      container:
+        externalId: SceneConfiguration
+        space: scene
+        type: container
+      containerPropertyIdentifier: updatedBy
+  space: scene
+  version: v1
+- externalId: TexturedMap
+  implements: []
+  name: TexturedMap
+  properties:
+    file:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: file
+    label:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: label
+  space: scene
+  version: v1
+- externalId: TexturedPlane
+  implements:
+  - externalId: TexturedMap
+    space: scene
+    type: view
+    version: v1
+  name: TexturedPlane
+  properties:
+    file:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: file
+    label:
+      container:
+        externalId: TexturedMap
+        space: scene
+        type: container
+      containerPropertyIdentifier: label
+    repeatU:
+      container:
+        externalId: TexturedPlane
+        space: scene
+        type: container
+      containerPropertyIdentifier: repeatU
+    repeatV:
+      container:
+        externalId: TexturedPlane
+        space: scene
+        type: container
+      containerPropertyIdentifier: repeatV
+    wrapping:
+      container:
+        externalId: TexturedPlane
+        space: scene
+        type: container
+      containerPropertyIdentifier: wrapping
+  space: scene
+  version: v1
