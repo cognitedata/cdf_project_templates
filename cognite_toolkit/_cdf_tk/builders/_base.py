@@ -60,7 +60,11 @@ class Builder(ABC):
 
     @abstractmethod
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
+        accept_invalid_files: bool = False,
     ) -> Iterable[BuildDestinationFile | Sequence[ToolkitWarning]]:
         raise NotImplementedError()
 
@@ -167,7 +171,11 @@ class DefaultBuilder(Builder):
     """This is used to build resources that do not have a specific builder."""
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
+        accept_invalid_files: bool = False,
     ) -> Iterable[BuildDestinationFile | list[ToolkitWarning]]:
         for source_file in source_files:
             if source_file.loaded is None:

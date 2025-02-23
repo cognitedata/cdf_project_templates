@@ -119,6 +119,7 @@ class BuildCommand(ToolkitCommand):
         no_clean: bool,
         client: ToolkitClient | None = None,
         on_error: Literal["continue", "raise"] = "continue",
+        accept_invalid_files: bool = False,
     ) -> BuiltModuleList:
         if organization_dir in {Path("."), Path("./")}:
             organization_dir = Path.cwd()
@@ -161,6 +162,7 @@ class BuildCommand(ToolkitCommand):
             verbose=verbose,
             client=client,
             on_error=on_error,
+            accept_invalid_files=accept_invalid_files,
         )
 
     def build_config(
@@ -174,6 +176,7 @@ class BuildCommand(ToolkitCommand):
         client: ToolkitClient | None = None,
         progress_bar: bool = False,
         on_error: Literal["continue", "raise"] = "continue",
+        accept_invalid_files: bool = False,
     ) -> BuiltModuleList:
         is_populated = build_dir.exists() and any(build_dir.iterdir())
         if is_populated and clean:
@@ -234,7 +237,9 @@ class BuildCommand(ToolkitCommand):
         else:
             self._has_built = True
 
-        built_modules = self.build_modules(modules.selected, build_dir, variables, verbose, progress_bar, on_error)
+        built_modules = self.build_modules(
+            modules.selected, build_dir, variables, verbose, progress_bar, on_error, accept_invalid_files
+        )
 
         self._check_missing_dependencies(organization_dir, client)
 
@@ -252,6 +257,7 @@ class BuildCommand(ToolkitCommand):
         verbose: bool = False,
         progress_bar: bool = False,
         on_error: Literal["continue", "raise"] = "continue",
+        accept_invalid_files: bool = False,
     ) -> BuiltModuleList:
         build = BuiltModuleList()
         warning_count = len(self.warning_list)
@@ -268,10 +274,15 @@ class BuildCommand(ToolkitCommand):
             last_identifiers: set[tuple[Hashable, Path]] = set()
             for iteration, module_variables in enumerate(module_variable_sets, 1):
                 try:
-                    built_module_resources = self._build_module_resources(module, build_dir, module_variables, verbose)
+                    built_module_resources = self._build_module_resources(
+                        module, build_dir, module_variables, verbose, accept_invalid_files
+                    )
                 except ToolkitError as err:
                     if on_error == "raise":
                         raise
+
+                    if accept_invalid_files:
+                        continue
 
                     suffix = "" if len(module_variable_sets) == 1 else f" ({iteration} of {len(module_variable_sets)})"
 
@@ -326,6 +337,7 @@ class BuildCommand(ToolkitCommand):
         build_dir: Path,
         module_variables: BuildVariables,
         verbose: bool,
+        accept_invalid_files: bool = False,
     ) -> dict[str, BuiltResourceList]:
         build_resources_by_folder: dict[str, BuiltResourceList] = defaultdict(BuiltResourceList)
         if not_resource_directory := module.not_resource_directories:
@@ -341,7 +353,9 @@ class BuildCommand(ToolkitCommand):
             builder = self._get_builder(build_dir, resource_name)
 
             built_resources = BuiltResourceList[Hashable]()
-            for destination in builder.build(source_files, module):
+            for destination in builder.build(
+                source_files=source_files, module=module, accept_invalid_files=accept_invalid_files
+            ):
                 if not isinstance(destination, BuildDestinationFile):
                     for warning in destination:
                         self.warn(warning)
@@ -355,9 +369,7 @@ class BuildCommand(ToolkitCommand):
                     continue
 
                 file_warnings, identifiers_kind_pairs = self.check_built_resource(
-                    destination.loaded,
-                    destination.loader,
-                    destination.source,
+                    destination.loaded, destination.loader, destination.source
                 )
                 file_warnings.extend(destination.warnings)
 
@@ -585,6 +597,9 @@ class BuildCommand(ToolkitCommand):
         source: SourceLocation,
     ) -> tuple[WarningList[FileReadWarning], list[tuple[Hashable, str]]]:
         warning_list = WarningList[FileReadWarning]()
+
+        if not parsed:
+            parsed = {}
 
         is_dict_item = isinstance(parsed, dict)
         items = [parsed] if isinstance(parsed, dict) else parsed

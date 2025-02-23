@@ -148,7 +148,8 @@
         "local",
         "-o",
         "./cognite_toolkit/",
-        "hextractors"
+        "akash",
+        "--verbose"
       ],
       "console": "integratedTerminal",
       "justMyCode": false

@@ -18,7 +18,11 @@ class FileBuilder(Builder):
     template_pattern = "$FILENAME"
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
+        accept_invalid_files: bool = False,
     ) -> Iterable[BuildDestinationFile | list[ToolkitWarning]]:
         for source_file in source_files:
             loaded = source_file.loaded

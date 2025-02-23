@@ -461,6 +461,7 @@ class PullCommand(ToolkitCommand):
                 no_clean=False,
                 client=client,
                 on_error="raise",
+                accept_invalid_files=True,
             )
         except ToolkitError as e:
             raise ToolkitError(f"Failed to build module {module_name_or_path}.") from e
@@ -536,6 +537,7 @@ class PullCommand(ToolkitCommand):
         resources: BuiltFullResourceList[T_ID],
         dry_run: bool,
         environment_variables: dict[str, str | None],
+        accept_invalid_files: bool = True,
     ) -> ResourceDeployResult:
         cdf_resources = loader.retrieve(resources.identifiers)  # type: ignore[arg-type]
         cdf_resource_by_id: dict[T_ID, T_WritableCogniteResource] = {loader.get_id(r): r for r in cdf_resources}
@@ -544,7 +546,9 @@ class PullCommand(ToolkitCommand):
         file_results = ResourceDeployResult(loader.display_name)
         environment_variables = environment_variables or {}
         for source_file, resources in resources_by_file.items():
-            local_resource_by_id = self._get_local_resource_dict_by_id(resources, loader, environment_variables)
+            local_resource_by_id = self._get_local_resource_dict_by_id(
+                resources, loader, environment_variables, accept_invalid_files
+            )
             has_changes, to_write = self._get_to_write(local_resource_by_id, cdf_resource_by_id, file_results, loader)
 
             if has_changes and not dry_run:
@@ -599,12 +603,20 @@ class PullCommand(ToolkitCommand):
             T_ID, T_WriteClass, T_WritableCogniteResource, T_CogniteResourceList, T_WritableCogniteResourceList
         ],
         environment_variables: dict[str, str | None],
+        allow_invalid_files: bool = False,
     ) -> dict[T_ID, dict[str, Any]]:
         unique_destinations = {r.destination for r in resources if r.destination}
         local_resource_by_id: dict[T_ID, dict[str, Any]] = {}
         local_resource_ids = set(resources.identifiers)
         for destination in unique_destinations:
-            resource_list = loader.load_resource_file(destination, environment_variables)
+            try:
+                resource_list = loader.load_resource_file(destination, environment_variables)
+            except ToolkitError as e:
+                if allow_invalid_files:
+                    # todo: naively load the file and ignore errors
+                    pass
+                else:
+                    raise e
             for resource_dict in resource_list:
                 identifier = loader.get_id(resource_dict)
                 if identifier in local_resource_ids:

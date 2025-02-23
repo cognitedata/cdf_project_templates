@@ -24,7 +24,11 @@ class FunctionBuilder(Builder):
     _resource_folder = FunctionLoader.folder_name
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
+        accept_invalid_files: bool = False,
     ) -> Iterable[BuildDestinationFile | Sequence[ToolkitWarning]]:
         for source_file in source_files:
             if source_file.loaded is None:

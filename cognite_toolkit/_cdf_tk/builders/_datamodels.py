@@ -20,7 +20,11 @@ class DataModelBuilder(Builder):
     _resource_folder = GraphQLLoader.folder_name
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
+        accept_invalid_files: bool = False,
     ) -> Iterable[BuildDestinationFile | list[ToolkitWarning]]:
         graphql_files = {
             source_file.source.path: source_file
