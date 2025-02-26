@@ -631,7 +631,7 @@ class ViewLoader(ResourceLoader[ViewId, ViewApply, View, ViewApplyList, ViewList
             return [views_by_id[view_id] for view_id in TopologicalSorter(dependencies_by_id).static_order()]
         except CycleError as e:
             raise ToolkitCycleError(
-                f"Cycle detected in views: {e.args[0]}. Please fix the cycle before deploying."
+                f"Cycle detected in views: {e.args[1]}. Please fix the cycle before deploying."
             ) from e
 
     @staticmethod

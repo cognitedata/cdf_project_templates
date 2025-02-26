@@ -46,6 +46,7 @@ from cognite_toolkit._cdf_tk.loaders import (
     LabelLoader,
     RobotCapabilityLoader,
     RoboticsDataPostProcessingLoader,
+    ViewLoader,
 )
 from tests.test_integration.constants import RUN_UNIQUE_ID
 
@@ -605,3 +606,47 @@ fileCategory: Document
             assert retrieved[0].extra_properties["status"] == "Inactive"
         finally:
             loader.delete([file.as_id()])
+
+
+class TestViewLoader:
+    def test_deploy_child_before_parent(
+        self, toolkit_client: ToolkitClient, schema_space: dm.Space, a_container: dm.Container
+    ) -> None:
+        child_view = dm.ViewApply(
+            space=schema_space.space,
+            external_id="TestDeployChildBeforeParent_Child",
+            version="v1",
+            implements=[dm.ViewId(schema_space.space, "TestDeployChildBeforeParent_Parent", "v1")],
+        )
+        other_views = [
+            dm.ViewApply(
+                space=schema_space.space,
+                external_id=f"TestDeployChildBeforeParent_Other_{i}",
+                version="v1",
+                properties={
+                    "name": dm.MappedPropertyApply(container=a_container.as_id(), container_property_identifier="name")
+                },
+            )
+            for i in range(10)
+        ]
+
+        parent_view = dm.ViewApply(
+            space=schema_space.space,
+            external_id="TestDeployChildBeforeParent_Parent",
+            version="v1",
+            properties={
+                "name": dm.MappedPropertyApply(container=a_container.as_id(), container_property_identifier="name")
+            },
+            implements=[dm.ViewId("cdf_cdm", "CogniteDescribable", "v1")],
+        )
+
+        loader = ViewLoader.create_loader(toolkit_client, None)
+
+        try:
+            created = loader.create([child_view, *other_views, parent_view])
+
+            assert len(created) == 2 + len(other_views)
+        finally:
+            toolkit_client.data_modeling.views.delete(
+                [child_view.as_id(), parent_view.as_id()] + [view.as_id() for view in other_views]
+            )
