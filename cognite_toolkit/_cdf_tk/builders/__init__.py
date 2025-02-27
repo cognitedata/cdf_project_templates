@@ -20,12 +20,14 @@ def create_builder(
 
 
 _BUILDER_BY_RESOURCE_FOLDER = {_builder._resource_folder: _builder for _builder in Builder.__subclasses__()}
+
 __all__ = [
     "Builder",
     "DataModelBuilder",
     "DefaultBuilder",
     "FileBuilder",
     "FunctionBuilder",
+    "IdentifierBuilder",
     "RawBuilder",
     "StreamlitBuilder",
     "TransformationBuilder",

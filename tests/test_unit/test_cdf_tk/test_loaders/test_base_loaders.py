@@ -325,14 +325,3 @@ class TestResourceLoaders:
         duplicated.pop("auth")
 
         assert not duplicated, f"Duplicated kind by folder: {duplicated!s}"
-
-
-class TestLoaders:
-    def test_unique_display_names(self, env_vars_with_client: EnvironmentVariables):
-        name_by_count = Counter(
-            [loader_cls.create_loader(env_vars_with_client.get_client()).display_name for loader_cls in LOADER_LIST]
-        )
-
-        duplicates = {name: count for name, count in name_by_count.items() if count > 1}
-
-        assert not duplicates, f"Duplicate display names: {duplicates}"

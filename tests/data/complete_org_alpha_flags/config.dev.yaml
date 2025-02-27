@@ -13,4 +13,6 @@ variables:
 
     to_repeat:
       - location: Oslo
+        dataset: ds_oslo
       - location: Drammen
+        dataset: ds_drammen

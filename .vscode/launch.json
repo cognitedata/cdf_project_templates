@@ -131,7 +131,7 @@
         "--env", 
         "local",
         "-o",
-        "./cognite_toolkits/"
+        "./cognite_toolkit/"
       ],
       "console": "integratedTerminal",
       "justMyCode": false
@@ -148,7 +148,20 @@
         "local",
         "-o",
         "./cognite_toolkit/",
-        "hextractors"
+        "akash",
+        "--verbose"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "cdf auth init",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "./cdf-tk-dev.py",
+      "args": [
+        "auth",
+        "init",
       ],
       "console": "integratedTerminal",
       "justMyCode": false

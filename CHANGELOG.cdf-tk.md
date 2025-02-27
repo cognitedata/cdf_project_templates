@@ -15,6 +15,12 @@ Changes are grouped as follows:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## TBD
+
+### Fixed
+
+- Kind in Query files broke pull command. This is now fixed.
+
 ## [0.4.10] - 2025-02-24
 
 ### Fixed

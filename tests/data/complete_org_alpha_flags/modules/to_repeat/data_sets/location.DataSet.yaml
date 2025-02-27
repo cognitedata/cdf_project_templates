@@ -1,3 +1,3 @@
-- externalId: ds_{{ location }}_assets
+- externalId: {{ dataset }}_assets
   name: Dataset for assets on {{ location }}
   description: This is the dataset for all assets on {{ location }}

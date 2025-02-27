@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from graphlib import CycleError
 from pathlib import Path
 
@@ -108,6 +108,26 @@ class ToolkitFileExistsError(FileExistsError, ToolkitError):
 
 class ToolkitValidationError(ToolkitError):
     pass
+
+
+class ToolkitIdentifierMissingError(ToolkitValidationError):
+    def __init__(self, missing: str | Iterable[str], file: Path) -> None:
+        super().__init__(f"Missing or incomplete resource identifier in file {file.as_posix()!r}:")
+        self.missing: str | Iterable[str] = missing
+        self.file = file
+
+    def __str__(self) -> str:
+        lines = [super().__str__()]
+        if isinstance(self.missing, str):
+            self.missing = [self.missing]
+
+        for missing in self.missing:
+            lines.append(f"    {missing!r}")
+        return "\n".join(lines)
+
+    def __repr__(self) -> str:
+        # Repr is what is called by rich when the exception is printed.
+        return str(self)
 
 
 class ToolkitCycleError(CycleError, ToolkitValidationError):

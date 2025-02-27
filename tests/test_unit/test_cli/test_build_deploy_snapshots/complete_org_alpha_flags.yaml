@@ -1,24 +1,24 @@
 Asset:
-- dataSetId: 9434864499692429728
+- dataSetId: 15073806162289903006
   description: This is the root asset on Drammen
   externalId: Drammen_root
   name: RootAsset
   source: doctrino
-- dataSetId: 8534518845016003109
+- dataSetId: 13349133991111597813
   description: This is the root asset on Oslo
   externalId: Oslo_root
   name: RootAsset
   source: doctrino
 DataSet:
-- description: This is the dataset for all assets on Drammen
-  externalId: ds_Drammen_assets
-  name: Dataset for assets on Drammen
-- description: This is the dataset for all assets on Oslo
-  externalId: ds_Oslo_assets
-  name: Dataset for assets on Oslo
 - description: This dataset is used for all the resources in the complete_org.
   externalId: ds_complete_org
   name: Example dataset.
+- description: This is the dataset for all assets on Drammen
+  externalId: ds_drammen_assets
+  name: Dataset for assets on Drammen
+- description: This is the dataset for all assets on Oslo
+  externalId: ds_oslo_assets
+  name: Dataset for assets on Oslo
 FileLoader:
 - externalId: MyExtendedFile
   filehash: 5e6be7b4

@@ -21,30 +21,31 @@ class StreamlitBuilder(Builder):
     _resource_folder = StreamlitLoader.folder_name
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
     ) -> Iterable[BuildDestinationFile | Sequence[ToolkitWarning]]:
         for source_file in source_files:
-            if source_file.loaded is None:
-                continue
-            if source_file.source.path.parent.parent != module.dir:
-                # Streamlit YAML files must be in the resource folder top level
-                continue
+            loaded = source_file.loaded
+            if not loaded or source_file.source.path.parent.parent != module.dir:
+                continue  # Skip non-YAML files or misplaced files
 
             loader, warning = self._get_loader(source_file.source.path)
-            if loader is None:
-                if warning is not None:
+            if not loader:
+                if warning:
                     yield [warning]
                 continue
 
-            warnings = WarningList[FileReadWarning]()
-            if loader is StreamlitLoader:
-                warnings = self.copy_app_directory_to_build(source_file)
-
-            destination_path = self._create_destination_path(source_file.source.path, loader.kind)
+            warnings = (
+                self.copy_app_directory_to_build(source_file)
+                if loader is StreamlitLoader
+                else WarningList[FileReadWarning]()
+            )
 
             yield BuildDestinationFile(
-                path=destination_path,
-                loaded=source_file.loaded,
+                path=self._create_destination_path(source_file.source.path, loader.kind),
+                loaded=loaded,
                 loader=loader,
                 source=source_file.source,
                 extra_sources=None,

@@ -8,7 +8,11 @@ from cognite_toolkit._cdf_tk.data_classes import (
     BuiltResourceList,
     ModuleLocation,
 )
-from cognite_toolkit._cdf_tk.exceptions import ToolkitFileExistsError, ToolkitNotADirectoryError, ToolkitValueError
+from cognite_toolkit._cdf_tk.exceptions import (
+    ToolkitFileExistsError,
+    ToolkitNotADirectoryError,
+    ToolkitValueError,
+)
 from cognite_toolkit._cdf_tk.loaders import FunctionLoader
 from cognite_toolkit._cdf_tk.tk_warnings import (
     FileReadWarning,
@@ -24,30 +28,30 @@ class FunctionBuilder(Builder):
     _resource_folder = FunctionLoader.folder_name
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
     ) -> Iterable[BuildDestinationFile | Sequence[ToolkitWarning]]:
         for source_file in source_files:
-            if source_file.loaded is None:
-                continue
-            if source_file.source.path.parent.parent != module.dir:
-                # Function YAML files must be in the resource folder.
-                continue
+            loaded = source_file.loaded
+            if not loaded or source_file.source.path.parent.parent != module.dir:
+                continue  # Skip non-YAML files or files outside the resource folder
 
             loader, warning = self._get_loader(source_file.source.path)
-            if loader is None:
-                if warning is not None:
+            if not loader:
+                if warning:
                     yield [warning]
                 continue
 
             warnings = WarningList[FileReadWarning]()
+
             if loader is FunctionLoader:
                 warnings = self.copy_function_directory_to_build(source_file)
 
-            destination_path = self._create_destination_path(source_file.source.path, loader.kind)
-
             yield BuildDestinationFile(
-                path=destination_path,
-                loaded=source_file.loaded,
+                path=self._create_destination_path(source_file.source.path, loader.kind),
+                loaded=loaded,
                 loader=loader,
                 source=source_file.source,
                 extra_sources=None,

@@ -18,7 +18,10 @@ class FileBuilder(Builder):
     template_pattern = "$FILENAME"
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
     ) -> Iterable[BuildDestinationFile | list[ToolkitWarning]]:
         for source_file in source_files:
             loaded = source_file.loaded
@@ -30,10 +33,11 @@ class FileBuilder(Builder):
                 if warning is not None:
                     yield [warning]
                 continue
+
             if loader in {FileMetadataLoader, CogniteFileLoader}:
                 loaded = self._expand_file_metadata(loaded, module, console)
-            destination_path = self._create_destination_path(source_file.source.path, loader.kind)
 
+            destination_path = self._create_destination_path(source_file.source.path, loader.kind)
             yield BuildDestinationFile(
                 path=destination_path,
                 loaded=loaded,

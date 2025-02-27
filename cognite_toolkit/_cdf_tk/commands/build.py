@@ -341,7 +341,7 @@ class BuildCommand(ToolkitCommand):
             builder = self._get_builder(build_dir, resource_name)
 
             built_resources = BuiltResourceList[Hashable]()
-            for destination in builder.build(source_files, module):
+            for destination in builder.build(source_files=source_files, module=module):
                 if not isinstance(destination, BuildDestinationFile):
                     for warning in destination:
                         self.warn(warning)
@@ -355,9 +355,7 @@ class BuildCommand(ToolkitCommand):
                     continue
 
                 file_warnings, identifiers_kind_pairs = self.check_built_resource(
-                    destination.loaded,
-                    destination.loader,
-                    destination.source,
+                    destination.loaded, destination.loader, destination.source
                 )
                 file_warnings.extend(destination.warnings)
 
