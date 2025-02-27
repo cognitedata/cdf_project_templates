@@ -1,6 +1,6 @@
 [project]
 name = "cognite_toolkit"
-version = "0.4.10"
+version = "0.0.0"
 description = "Official Cognite Data Fusion tool for project templates and configuration deployment"
 authors = [
     {name ="Cognite AS", email="support@cognite.com"}
@@ -55,6 +55,7 @@ fastparquet = "^2024.5.0"
 pyperclip = "^1.9.0"
 pydantic = "^2.9.0"
 types-requests = "^2.32.0.20241016"
+marko = "^2.1.2"
 
 [tool.poetry.scripts]
 cdf-tk = "cognite_toolkit._cdf:app"

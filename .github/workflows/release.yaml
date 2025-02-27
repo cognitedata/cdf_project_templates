@@ -2,19 +2,19 @@ name: Release Toolkit
 on:
   push:
     branches:
-      - release
+      - main
 env:
   PYTHON_VERSION: '3.11'
   POETRY_VERSION: '2.0.1'
 
 jobs:
-  release-pypi:
+  release-pypi-docker-hub:
     runs-on: ubuntu-latest
     environment: CD
-    # This causes issues when CDF is down.
-    #needs: [lint, test, build]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -24,36 +24,50 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry sync
+      - name: Dump last commit message to file
+        run: git log -1 --pretty=%B > last_git_message.txt
+      - name: Dump last tag to file
+        run: git describe --tags --abbrev=0 > last_version.txt
+      - name: Bump Version
+        run: python dev.py bump --verbose
+      - name: Create CHANGELOG entry
+        run: python dev.py changelog
+      - id: version
+        name: Read the new version
+        # Read the version from the cognite_toolkit/_version.py file
+        run: echo "version=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' cognite_toolkit/_version.py)" >> $GITHUB_ENV
       - name: Build package
+        if: env.version != '0.0.0'
         run: poetry build
       - name: Release to PyPI
+        if: env.version != '0.0.0'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: twine upload --verbose dist/*
-
-  release-to-docker-hub:
-    runs-on: ubuntu-latest
-    environment: CD
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        run: twine upload --skip-existing --verbose dist/*
+      - name: Add entry to CHANGELOG
+        if: env.version != '0.0.0'
+        uses: ncipollo/release-action@v1
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            prerelease: false
+            draft: false
+            tag: ${{ env.version }}
+            bodyFile: last_changelog_entry.md
 
       - name: Login to Docker Hub
+        if: env.version != '0.0.0'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Set up Docker Buildx
+        if: env.version != '0.0.0'
         uses: docker/setup-buildx-action@v3
 
-      - id: version
-        name: Toolkit Version
-        # Read the version from the cognite_toolkit/_version.py file
-        run: echo "version=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' cognite_toolkit/_version.py)" >> $GITHUB_ENV
-
       - name: Build and push
+        if: env.version != '0.0.0'
         uses: docker/build-push-action@v6
         with:
           context: .

@@ -28,7 +28,8 @@ FROM python:3.11-slim-bookworm
 COPY --from=builder /usr/local/lib/python3.11/site-packages  /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=builder /cognite_toolkit /cognite_toolkit
-
+# This is only used for development
+RUN rm -rf /app/dev.py
 RUN mkdir /app
 WORKDIR /app
 

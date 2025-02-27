@@ -113,44 +113,6 @@ def app() -> NoReturn:
 
             _app.add_typer(import_app, name="import")
 
-        # Secret plugin, this will be removed without warning
-        # This should not be documented, or raise any error or warnings,
-        # just fail silently if the plugin is not found or not correctly setup.
-        dev_py = Path.cwd() / "dev.py"
-        if dev_py.exists():
-            from importlib.util import module_from_spec, spec_from_file_location
-
-            spec = spec_from_file_location("dev", dev_py)
-            if spec and spec.loader:
-                dev_module = module_from_spec(spec)
-                spec.loader.exec_module(dev_module)
-                if "CDF_TK_PLUGIN" in dev_module.__dict__:
-                    command_by_name = {cmd.name: cmd for cmd in _app.registered_commands}
-                    group_by_name = {group.name: group for group in _app.registered_groups}
-                    for name, type_app in dev_module.__dict__["CDF_TK_PLUGIN"].items():
-                        if not isinstance(type_app, typer.Typer):
-                            continue
-                        if name in command_by_name:
-                            # We are not allowed to replace an existing command.
-                            continue
-                        elif name in group_by_name:
-                            group = group_by_name[name]
-                            if group.typer_instance is None:
-                                continue
-                            existing_command_names = {cmd.name for cmd in group.typer_instance.registered_commands}
-                            for new_command in type_app.registered_commands:
-                                if new_command.name in existing_command_names:
-                                    # We are not allowed to replace an existing command.
-                                    continue
-                                group.typer_instance.command(new_command.name)(new_command.callback)  # type: ignore [type-var]
-                        else:
-                            if type_app.registered_groups:
-                                _app.add_typer(type_app, name=name)
-                            else:
-                                for app_cmd in type_app.registered_commands:
-                                    if app_cmd.name not in command_by_name:
-                                        _app.command(app_cmd.name)(app_cmd.callback)  # type: ignore [type-var]
-
         _app()
     except ToolkitError as err:
         if "--verbose" in sys.argv:
