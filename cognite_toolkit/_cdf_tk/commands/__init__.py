@@ -6,6 +6,8 @@ from .clean import CleanCommand
 from .collect import CollectCommand
 from .deploy import DeployCommand
 from .dump_assets import DumpAssetsCommand
+from .dump_events import DumpEventCommand
+from .dump_files import DumpFileMetadataCommand
 from .dump_resource import DumpResourceCommand
 from .dump_timeseries import DumpTimeSeriesCommand
 from .featureflag import FeatureFlagCommand
@@ -22,6 +24,8 @@ __all__ = [
     "CollectCommand",
     "DeployCommand",
     "DumpAssetsCommand",
+    "DumpEventCommand",
+    "DumpFileMetadataCommand",
     "DumpResourceCommand",
     "DumpTimeSeriesCommand",
     "FeatureFlagCommand",
