@@ -17,6 +17,7 @@ BUILD_GROUP_WITH_UNKNOWN_ACL = DATA_FOLDER / "build_group_with_unknown_acl"
 COMPLETE_ORG = DATA_FOLDER / "complete_org"
 COMPLETE_ORG_ALPHA_FLAGS = DATA_FOLDER / "complete_org_alpha_flags"
 CDF_TOML_DATA = DATA_FOLDER / "cdf_toml_data"
+ORG_FOR_PULL = DATA_FOLDER / "org_for_pull"
 
 __all__ = [
     "AUTH_DATA",
@@ -26,6 +27,7 @@ __all__ = [
     "DATA_FOLDER",
     "DESCRIPTIONS_FOLDER",
     "LOAD_DATA",
+    "ORG_FOR_PULL",
     "PROJECT_FOR_TEST",
     "PROJECT_NO_COGNITE_MODULES",
     "PROJECT_WITH_BAD_MODULES",

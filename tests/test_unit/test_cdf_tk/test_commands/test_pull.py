@@ -1,18 +1,23 @@
+import shutil
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+from cognite.client.data_classes import Transformation, TransformationDestination, TransformationList
 
-from cognite_toolkit._cdf_tk.commands.pull import PullCommand, ResourceYAMLDifference, TextFileDifference
+from cognite_toolkit._cdf_tk.commands.pull import BuildCommand, PullCommand, ResourceYAMLDifference, TextFileDifference
 from cognite_toolkit._cdf_tk.data_classes import (
+    BuildConfigYAML,
     BuildVariable,
     BuildVariables,
     BuiltFullResourceList,
     BuiltResourceFull,
 )
 from cognite_toolkit._cdf_tk.loaders import DataSetsLoader
+from cognite_toolkit._cdf_tk.utils.auth import EnvironmentVariables
+from tests.data import ORG_FOR_PULL
 from tests.test_unit.approval_client import ApprovalToolkitClient
 
 
@@ -519,3 +524,71 @@ class TestPullCommand:
         )
         assert not extra_files, "This tests does not support testing extra files"
         assert actual.splitlines() == expected.splitlines()
+
+    def test_pull_transformation_with_sql(
+        self,
+        tmp_path: Path,
+        toolkit_client_approval: ApprovalToolkitClient,
+        env_vars_with_client: EnvironmentVariables,
+    ) -> None:
+        tmp_org_path = tmp_path / "org"
+        tmp_org_path.mkdir()
+        shutil.copytree(
+            str(ORG_FOR_PULL / "modules" / "my_placeholder_module"),
+            str(tmp_org_path / "modules" / "my_placeholder_module"),
+        )
+
+        tmp_build_path = tmp_org_path / "build"
+        tmp_build_path.mkdir()
+
+        toolkit_client_approval.mock_client.transformations.retrieve_multiple.side_effect = (
+            lambda ids, external_ids, ignore_unknown_ids: (
+                TransformationList(
+                    resources=[
+                        Transformation(
+                            external_id="placeholder",
+                            name="pump_asset_hierarchy-load-collections_pump",
+                            destination=TransformationDestination(type="asset_hierarchy"),
+                            isPublic=True,
+                            conflictMode="upsert",
+                            query="SELECT * FROM my_table",
+                        )
+                    ]
+                )
+                if external_ids == ["placeholder"]
+                else TransformationList(resources=[])
+            )
+        )
+
+        build_cmd = BuildCommand(silent=True, skip_tracking=True)
+        config = BuildConfigYAML.load_default(ORG_FOR_PULL)
+        config.environment.selected = ["my_placeholder_module"]
+        built_modules = build_cmd.build_config(
+            build_dir=tmp_build_path,
+            organization_dir=tmp_org_path,
+            config=config,
+            packages={},
+            on_error="raise",
+        )
+
+        yaml_before = built_modules[0].resources["transformations"][0].source.path.read_text()
+        sql_before = built_modules[0].resources["transformations"][0].extra_sources[0].path.read_text()
+
+        pull_cmd = PullCommand(silent=True, skip_tracking=True)
+        pull_cmd._pull_build_dir(
+            tmp_build_path,
+            selected=["my_placeholder_module"],
+            built_modules=built_modules,
+            dry_run=False,
+            build_env_name="dev",
+            client=toolkit_client_approval.mock_client,
+            env_vars=env_vars_with_client,
+        )
+
+        yaml_after = built_modules[0].resources["transformations"][0].source.path.read_text()
+        sql_after = built_modules[0].resources["transformations"][0].extra_sources[0].path.read_text()
+
+        assert yaml_before != yaml_after
+        assert sql_before != sql_after
+
+        #     cmd._pull_build_dir()

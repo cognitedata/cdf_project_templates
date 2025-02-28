@@ -19,12 +19,15 @@ class TransformationBuilder(Builder):
     _resource_folder = TransformationLoader.folder_name
 
     def build(
-        self, source_files: list[BuildSourceFile], module: ModuleLocation, console: Callable[[str], None] | None = None
+        self,
+        source_files: list[BuildSourceFile],
+        module: ModuleLocation,
+        console: Callable[[str], None] | None = None,
     ) -> Iterable[BuildDestinationFile | list[ToolkitWarning]]:
         query_files = {
             source_file.source.path: source_file
             for source_file in source_files
-            if source_file.source.path.suffix == ".sql"
+            if source_file.source.path.name.endswith(".sql")
         }
 
         for source_file in source_files:
@@ -39,19 +42,18 @@ class TransformationBuilder(Builder):
                 continue
 
             destination_path = self._create_destination_path(source_file.source.path, loader.kind)
-
             extra_sources: list[SourceLocation] | None = None
+
             if loader is TransformationLoader:
                 extra_sources = self._add_query(loaded, source_file, query_files, destination_path)
 
-            destination = BuildDestinationFile(
+            yield BuildDestinationFile(
                 path=destination_path,
                 loaded=loaded,
                 loader=loader,
                 source=source_file.source,
                 extra_sources=extra_sources,
             )
-            yield destination
 
     def load_extra_field(self, extra: str) -> tuple[str, Any]:
         return "query", extra
@@ -81,7 +83,7 @@ class TransformationBuilder(Builder):
                 )
             elif "query" not in entry and query_file is None:
                 raise ToolkitYAMLFormatError(
-                    f"query property or is missing. It can be inline or a separate file named {filepath.stem}.sql or {external_id}.sql",
+                    f"query property or file is missing. It can be inline or a separate file named {filepath.stem}.sql or {external_id}.sql",
                     filepath,
                 )
             elif query_file is not None:

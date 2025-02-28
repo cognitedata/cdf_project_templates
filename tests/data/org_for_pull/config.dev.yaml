@@ -1,0 +1,32 @@
+environment:
+  name: dev
+  project: <customer-dev>
+  type: dev
+  selected:
+    - modules/
+
+variables:
+  modules:
+    # Globally defined variables are available to all submodules
+    # of the cognite_modules.
+    cdf_cluster: ${CDF_CLUSTER}
+    cicd_clientId: ${IDP_CLIENT_ID}
+    cicd_clientSecret: ${IDP_CLIENT_SECRET}
+    cicd_tokenUri: ${IDP_TOKEN_URL}
+    cdfProjectName: ${CDF_PROJECT}
+    # Optional: If idP requires providing the scopes
+    cicd_scopes:
+      - ${IDP_SCOPES}
+    # Optional: If idP requires providing the audience
+    cicd_audience: ${IDP_AUDIENCE}
+    # Seven minutes past each hour
+    scheduleHourly: 7 * * * *
+    # Every fifteen minutes
+    scheduleQuarterly: 0/15 * * * *
+    # Daily at 1:35 AM
+    scheduleDaily: 35 1 * * *
+
+    example_variable: foo
+    workflow_external_id: baz
+    example_secret: '${ENVIRONMENT_SECRET}'
+    space_files: sp_complete_org_files
