@@ -85,7 +85,12 @@ from cognite_toolkit._cdf_tk.client.data_classes.graphql_data_models import (
     GraphQLDataModelWriteList,
 )
 from cognite_toolkit._cdf_tk.constants import HAS_DATA_FILTER_LIMIT
-from cognite_toolkit._cdf_tk.exceptions import GraphQLParseError, ToolkitCycleError, ToolkitFileNotFoundError
+from cognite_toolkit._cdf_tk.exceptions import (
+    GraphQLParseError,
+    ToolkitCycleError,
+    ToolkitFileNotFoundError,
+    ToolkitValueError,
+)
 from cognite_toolkit._cdf_tk.loaders._base_loaders import (
     ResourceContainerLoader,
     ResourceLoader,
@@ -601,9 +606,15 @@ class ViewLoader(ResourceLoader[ViewId, ViewApply, View, ViewApplyList, ViewList
             if self._is_auto_retryable(e1):
                 # Fallback to creating one by one if the error is auto-retryable.
                 return self._fallback_create_one_by_one(items, e1)
+            elif error_message := self._is_revers_direct_relation_target(e1, items):
+                raise ToolkitValueError(error_message) from e1
             elif self._is_deployment_order(e1, set(self.get_ids(items))):
                 return self._fallback_create_one_by_one(self._topological_sort(items), e1, warn=False)
             raise
+
+    @staticmethod
+    def _is_revers_direct_relation_target(e1: CogniteAPIError, items: Sequence[ViewApply]) -> str:
+        return ""
 
     @staticmethod
     def _is_deployment_order(e: CogniteAPIError, ids: set[ViewId]) -> bool:
